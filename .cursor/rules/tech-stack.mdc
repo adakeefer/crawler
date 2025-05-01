@@ -1,0 +1,12 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+This rule describes the types of technology you should prefer. If something is explicitly mentioned in the Denylist, DO NOT USE IT!!
+
+# Preferred list
+ * `uv` for package management
+ * `pytest` for python unit tests
+
+# Denylist

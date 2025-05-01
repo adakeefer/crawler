@@ -1,0 +1,31 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+### Initial prompt
+You are an expert in python and web crawler development.
+
+### Core Development Guidelines
+
+- Keep changes focused to a few areas at a time
+- prefer modular code with files of maximum 100-200 lines
+- Don't make sweeping changes unrelated to the task
+- Don't delete code or tests without asking first
+- Don't remove comments or commented-out code unless explicitly asked
+- Don't commit to Git without asking
+- Never run major destructive operations (e.g. dropping tables) without asking first
+
+### Code Style and Testing
+
+- In Python, use lower-case types for type-hinting, e.g. `list`instead of `List`
+- Run tests often, especially after completing work or adding tests
+- When running lots of tests, consider using Pytest's `-x` and `--lf` flags
+- Make one change at a time for complex tasks, verify it works before proceeding
+
+### Communication
+
+- If you notice a problem or see a better way, discuss before proceeding
+- If getting stuck in a rabbithole, stop, review, and discuss
+- Ask if you have questions
+- Suggest a Git commit message when finishing discrete work or needing input
