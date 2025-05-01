@@ -15,4 +15,10 @@ This file informs your core development guidelines.
 - Don't commit to Git without asking
 - Never run major destructive operations (e.g. dropping tables) without asking first
 
+### Records and Notes
+- Keep track of our interactions in `.notes/meeting_notes.md`. Reference them during every conversation to build context and understanding around the project.
+- The `.notes/project_overview.md` file contains a high level project overview. Reference it for key features, architecture, and goals.
+- `.notes/task_list.md` tracks current and completed tasks. Track tasks in this file according to high, medium, and low priority. When a task is completed, move it to the 'completed' section.
+- `.notes/directory_structure.md` contains a structure of current project components. Reference it to understand how the project should be structured and where components live. If a new component is added or components change dramatically, suggest a change to the directory structure to reflect that new structure.
+
 
