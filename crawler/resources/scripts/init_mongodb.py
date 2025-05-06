@@ -21,11 +21,13 @@ def init_mongodb(mongo_uri: str = "mongodb://localhost:27017/"):
         
         # Create indexes from schema
         for index in LinkDocument.Config.json_schema_extra["indexes"]:
-            links.create_index(
-                index["fields"],
-                unique=index.get("unique", False),
-                expireAfterSeconds=index.get("expireAfterSeconds")
-            )
+            fields = [(field, 1) for field in index["fields"]]
+            kwargs = {}
+            if "unique" in index:
+                kwargs["unique"] = index["unique"]
+            if "expireAfterSeconds" in index:
+                kwargs["expireAfterSeconds"] = index["expireAfterSeconds"]
+            links.create_index(fields, **kwargs)
     except OperationFailure as e:
         print(f"Error creating link indexes: {e}")
     
@@ -37,11 +39,13 @@ def init_mongodb(mongo_uri: str = "mongodb://localhost:27017/"):
         
         # Create indexes from schema
         for index in ContentDocument.Config.json_schema_extra["indexes"]:
-            content.create_index(
-                index["fields"],
-                unique=index.get("unique", False),
-                expireAfterSeconds=index.get("expireAfterSeconds")
-            )
+            fields = [(field, 1) for field in index["fields"]]
+            kwargs = {}
+            if "unique" in index:
+                kwargs["unique"] = index["unique"]
+            if "expireAfterSeconds" in index:
+                kwargs["expireAfterSeconds"] = index["expireAfterSeconds"]
+            content.create_index(fields, **kwargs)
     except OperationFailure as e:
         print(f"Error creating content indexes: {e}")
     

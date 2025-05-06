@@ -55,3 +55,10 @@ Unless explicitly specified, write test cases for each task to verify the requir
 3. Containerize the URL frontier and the workers.
     * Right now the url frontier and worker components are just python classes. Let's make them run as isolated compute instances we can spin up in docker containers on our machine.
     * Make sure we can launch an arbitrary number of URL frontier and worker containers, and that each container can connect to the external docker resources like redis, mongoDB, etc which we already have.
+
+- Test and debug MongoDB scripts (2024-06-07):
+    - Fixed index creation to only pass expireAfterSeconds if present
+    - Converted index fields to PyMongo format
+    - Patched verification to match MongoDB index naming
+    - Used Docker Compose credentials for authentication
+    - Confirmed collections and indexes are created and verified

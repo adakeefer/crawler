@@ -25,7 +25,8 @@ def verify_mongodb(mongo_uri: str = "mongodb://localhost:27017/"):
     print(f"Found {len(link_indexes)} indexes (expected: {len(expected_link_indexes)})")
     
     for index in expected_link_indexes:
-        index_name = "_".join(f"{k}_{v}" for k, v in index["fields"])
+        fields = [(field, 1) for field in index["fields"]]
+        index_name = "_".join(f"{field}_{direction}" for field, direction in fields)
         found = any(idx["name"] == index_name for idx in link_indexes)
         print(f"Index '{index_name}': {'✓' if found else '✗'}")
     
@@ -39,7 +40,8 @@ def verify_mongodb(mongo_uri: str = "mongodb://localhost:27017/"):
     print(f"Found {len(content_indexes)} indexes (expected: {len(expected_content_indexes)})")
     
     for index in expected_content_indexes:
-        index_name = "_".join(f"{k}_{v}" for k, v in index["fields"])
+        fields = [(field, 1) for field in index["fields"]]
+        index_name = "_".join(f"{field}_{direction}" for field, direction in fields)
         found = any(idx["name"] == index_name for idx in content_indexes)
         print(f"Index '{index_name}': {'✓' if found else '✗'}")
     
