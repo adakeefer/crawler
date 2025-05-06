@@ -3,6 +3,7 @@ import sys
 from pathlib import Path
 from minio import Minio
 from minio.error import S3Error
+from minio.lifecycleconfig import Rule, Expiration, Filter
 
 # Add parent directory to path so we can import our schemas
 sys.path.append(str(Path(__file__).parent.parent))
@@ -43,7 +44,7 @@ def verify_minio(
             
             for rule in expected_rules:
                 found = any(
-                    r.id == rule["id"] and
+                    r.rule_id == rule["id"] and
                     r.status == rule["status"] and
                     r.expiration.days == rule["expiration"]["days"]
                     for r in lifecycle.rules

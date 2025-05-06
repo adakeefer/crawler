@@ -16,7 +16,7 @@ class ContentMetadata(BaseModel):
                 "lifecycle_rules": [
                     {
                         "id": "content-ttl",
-                        "status": "enabled",
+                        "status": "Enabled",
                         "expiration": {
                             "days": 1  # Content will be deleted after 1 day
                         }

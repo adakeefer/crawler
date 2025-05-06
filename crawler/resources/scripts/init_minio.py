@@ -3,7 +3,8 @@ import sys
 from pathlib import Path
 from minio import Minio
 from minio.error import S3Error
-from minio.commonconfig import VersioningConfig
+from minio.versioningconfig import VersioningConfig, ENABLED
+from minio.lifecycleconfig import LifecycleConfig, Rule, Expiration, Filter
 
 # Add parent directory to path so we can import our schemas
 sys.path.append(str(Path(__file__).parent.parent.parent))
@@ -30,23 +31,24 @@ def init_minio(
         
         # Configure versioning
         if bucket_config["versioning"]:
-            versioning = VersioningConfig(ENABLED="Enabled")
+            versioning = VersioningConfig(ENABLED)
             client.set_bucket_versioning(bucket_name, versioning)
             print(f"Enabled versioning for bucket: {bucket_name}")
         
         # Configure lifecycle rules
-        for rule in bucket_config["lifecycle_rules"]:
-            client.set_bucket_lifecycle(
-                bucket_name,
-                [
-                    {
-                        "ID": rule["id"],
-                        "Status": rule["status"],
-                        "Expiration": rule["expiration"]
-                    }
-                ]
+        rules = []
+        for rule_config in bucket_config["lifecycle_rules"]:
+            rules.append(
+                Rule(
+                    rule_filter=Filter(prefix=rule_config["id"]),
+                    rule_id=rule_config["id"],
+                    status=rule_config["status"],
+                    expiration=Expiration(days=rule_config["expiration"]["days"])
+                )
             )
-            print(f"Set lifecycle rule {rule['id']} for bucket: {bucket_name}")
+        lifecycle = LifecycleConfig(rules)
+        client.set_bucket_lifecycle(bucket_name, lifecycle)
+        print(f"Set lifecycle rules for bucket: {bucket_name}")
         
         print("MinIO initialized successfully!")
         print(f"Bucket: {bucket_name}")
