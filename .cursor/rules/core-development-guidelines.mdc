@@ -16,6 +16,8 @@ This file informs your core development guidelines.
 - Never run major destructive operations (e.g. dropping tables) without asking first
 - If you perform an action often, please place it in a script to easily rerun it in a `crawler/scripts` directory
 - Use concise git commit messages
+- document all components in directory level READMEs. Include API endpoints if necessary, data flow, dependencies, objectives, and failure modes. If a component is missing a README, update it.
+- When I EXPLICITLY SAY "MARK TASK AS COMPLETE": update our meeting notes in `.notes/meeting_notes.md` with the interaction, update the directory structure if applicable in `.notes/directory_structure.md`, update the `.notes/task_list.md`, and commit the changes.
 
 ### Records and Notes
 - Keep track of our interactions in `.notes/meeting_notes.md`. Reference them during every conversation to build context and understanding around the project.

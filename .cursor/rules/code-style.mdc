@@ -15,6 +15,7 @@ This file informs your code style and testing behavior
 - Print lots of output to monitor the status and verify the success of certain tasks.
 - Don't use emojis.
 - Always activate the virtual environment before running tests or the application: `source .venv/bin/activate`
+- Add concise comments often in code, especially for complex logic.
 
 ### Bash Script Style
 - Use `#!/bin/bash` shebang
