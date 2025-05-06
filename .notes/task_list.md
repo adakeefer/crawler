@@ -9,10 +9,7 @@ Unless explicitly specified, write test cases for each task to verify the requir
 
 ### High Priority
 
-1. Containerize the URL frontier and the workers.
-    * Right now the url frontier and worker components are just python classes. Let's make them run as isolated compute instances we can spin up in docker containers on our machine.
-    * Make sure we can launch an arbitrary number of URL frontier and worker containers, and that each container can connect to the external docker resources like redis, mongoDB, etc which we already have.
-2. Create controller to connect to and manage external resources and components
+1. Create controller to connect to and manage external resources and components
     * Add python class for the controller and a bash script to start the crawl by invoking the controller with the appropriate command line arguments.
     * Handle command line arguments described in `.notes/project_overview.md`
     * Start up all docker resources and run health checks
@@ -54,3 +51,7 @@ Unless explicitly specified, write test cases for each task to verify the requir
     * Created URL frontier process that connects to Redis
     * Added comprehensive tests for both components
     * All components print appropriate connection status messages
+
+3. Containerize the URL frontier and the workers.
+    * Right now the url frontier and worker components are just python classes. Let's make them run as isolated compute instances we can spin up in docker containers on our machine.
+    * Make sure we can launch an arbitrary number of URL frontier and worker containers, and that each container can connect to the external docker resources like redis, mongoDB, etc which we already have.
