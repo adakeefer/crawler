@@ -27,3 +27,24 @@
 ### Notes
 - Always consult code-style.mdc, core-development-guidelines.mdc, and tech-stack.mdc for basic rules
 - Infrastructure is ready for development with all services running and tested
+
+## 2024-03-26: Test Infrastructure
+
+### Completed Tasks
+- Created test runner script using pytest
+- Fixed infrastructure tests to use proper assertions
+- Added Python-specific patterns to .gitignore
+- Set up proper test environment with pytest configuration
+
+### Technical Decisions
+- Used pytest with flags:
+  - `-x`: stop on first failure
+  - `-v`: verbose output
+  - `--lf`: run last failed tests first
+- Improved test assertions for better error reporting
+- Fixed MinIO test to handle empty bucket list case
+
+### Notes
+- All infrastructure tests passing
+- Test runner script available at `crawler/scripts/run_tests.py`
+- Virtual environment properly configured with UV and pytest
