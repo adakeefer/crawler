@@ -13,14 +13,15 @@ def verify_redis(redis_url: str = "redis://localhost:6379"):
     config = RedisConfig()
     
     # Verify Redis server settings
+    redis_config = config.__class__.Config.json_schema_extra["redis_config"]
     maxmemory = r.config_get("maxmemory")["maxmemory"]
     maxmemory_policy = r.config_get("maxmemory-policy")["maxmemory-policy"]
     notify_keyspace_events = r.config_get("notify-keyspace-events")["notify-keyspace-events"]
     
     print("Verifying Redis configuration...")
-    print(f"Max memory: {maxmemory} (expected: {config.json_schema_extra['redis_config']['maxmemory']})")
-    print(f"Memory policy: {maxmemory_policy} (expected: {config.json_schema_extra['redis_config']['maxmemory_policy']})")
-    print(f"Keyspace events: {notify_keyspace_events} (expected: {config.json_schema_extra['redis_config']['notify_keyspace_events']})")
+    print(f"Max memory: {maxmemory} (expected: {redis_config['maxmemory']})")
+    print(f"Memory policy: {maxmemory_policy} (expected: {redis_config['maxmemory_policy']})")
+    print(f"Keyspace events: {notify_keyspace_events} (expected: {redis_config['notify_keyspace_events']})")
     
     # Verify URL frontier queue exists
     url_queue = config.url_queue

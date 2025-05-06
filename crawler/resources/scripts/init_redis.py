@@ -13,9 +13,10 @@ def init_redis(redis_url: str = "redis://localhost:6379"):
     config = RedisConfig()
     
     # Configure Redis server settings
-    r.config_set("maxmemory", config.json_schema_extra["redis_config"]["maxmemory"])
-    r.config_set("maxmemory-policy", config.json_schema_extra["redis_config"]["maxmemory_policy"])
-    r.config_set("notify-keyspace-events", config.json_schema_extra["redis_config"]["notify_keyspace_events"])
+    redis_config = config.__class__.Config.json_schema_extra["redis_config"]
+    r.config_set("maxmemory", redis_config["maxmemory"])
+    r.config_set("maxmemory-policy", redis_config["maxmemory_policy"])
+    r.config_set("notify-keyspace-events", redis_config["notify_keyspace_events"])
     
     # Initialize URL frontier queue
     url_queue = config.url_queue

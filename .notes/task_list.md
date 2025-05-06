@@ -9,7 +9,11 @@ Unless explicitly specified, write test cases for each task to verify the requir
 
 ### High Priority
 
-1. Create controller to connect to and manage external resources and components
+1. Patch @init_redis.py to create the queues and caches needed. We specifically want the functionality described in @project_overview.md and @README.md .  The file should take in a command line argument for number of workers (int, default is 2). Create:
+    1. The main distributed URL queue using @URLQueueConfig 
+    2. queues using @PriorityQueueConfig for each priority_queue described in @URLQueueConfig .
+    3. worker queues using @WorkerQueueConfig for each worker. 
+2. Create controller to connect to and manage external resources and components
     * Add python class for the controller and a bash script to start the crawl by invoking the controller with the appropriate command line arguments.
     * Handle command line arguments described in `.notes/project_overview.md`
     * Start up all docker resources and run health checks
