@@ -18,6 +18,10 @@ This file informs your core development guidelines.
 - document all components in directory level READMEs. Include API endpoints if necessary, data flow, dependencies, objectives, and failure modes. If a component is missing a README, update it.
 - Suggest a Git commit message when finishing discrete work or needing input
 - WHEN I EXPLICITLY SAY "MARK TASK AS COMPLETE": update our meeting notes in [meeting_notes.md](mdc:.notes/meeting_notes.md) with the interaction, update the directory structure if applicable in [directory_structure.md](mdc:.notes/directory_structure.md), update the [task_list.md](mdc:.notes/task_list.md), and commit the changes. DO NOT DO THIS UNTIL I SAY "MARK TASK AS COMPLETE"!!!!!!!!!!!!!!!
+- Testing best practices live in [testing.mdc](mdc:.cursor/rules/testing.mdc)
+- always follow the tech stack restrictions listed in [tech-stack.mdc](mdc:.cursor/rules/tech-stack.mdc).
+- Follow the code style described in [code-style.mdc](mdc:.cursor/rules/code-style.mdc).
+- Use the practices in [git.mdc](mdc:.cursor/rules/git.mdc) when committing.
 
 ### Records and Notes
 - Keep track of our interactions in [meeting_notes.md](mdc:.notes/meeting_notes.md). Reference them during every conversation to build context and understanding around the project.
