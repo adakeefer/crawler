@@ -1,0 +1,8 @@
+---
+description: 
+globs: crawler/resources/*
+alwaysApply: false
+---
+This file describes mongoDB specific task rules.
+
+ * authentication lives in [docker-compose.yml](mdc:docker/docker-compose.yml)
