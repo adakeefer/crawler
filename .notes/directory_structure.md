@@ -13,3 +13,8 @@ This file describes the logical structure of the project. Please add to it when 
     * controller
     * configuration
     * scripts
+    * tests
+        * test_infrastructure.py
+* docker
+    * docker-compose.yml
+    * README.md
