@@ -8,24 +8,21 @@ This file informs your core development guidelines.
 ### Basic Practices
 - You are an expert in python and web crawler development.
 - Keep changes focused to a few areas at a time
-- prefer modular code with files of maximum 100-200 lines
 - Don't make sweeping changes unrelated to the task
 - Don't delete code or tests without asking first
 - Don't remove comments or commented-out code unless explicitly asked
 - Don't commit to Git without asking
+- Make one change at a time for complex tasks, verify it works before proceeding
 - Never run major destructive operations (e.g. dropping tables) without asking first
-- If you perform an action often, please place it in a script to easily rerun it in a `crawler/scripts` directory
-- Use concise git commit messages
+- If you perform an action often, please place it in a script to easily rerun it in the scripts directory
 - document all components in directory level READMEs. Include API endpoints if necessary, data flow, dependencies, objectives, and failure modes. If a component is missing a README, update it.
-- WHEN I EXPLICITLY SAY "MARK TASK AS COMPLETE": update our meeting notes in `.notes/meeting_notes.md` with the interaction, update the directory structure if applicable in `.notes/directory_structure.md`, update the `.notes/task_list.md`, and commit the changes. DO NOT DO THIS UNTIL I SAY "MARK TASK AS COMPLETE"!!!!!!!!!!!!!!!
-- always keep a bash script called `run_tests.sh` under a `scripts` folder at the root level of the project which runs all tests in the project.
-- always run the `scripts/run_tests.sh` script after every change to verify we don't regress
-- rebuild and restart any services we have containerized after each change to verify we don't regress using `scripts/start_crawler.sh`. Enhance health checks as necessary for new functionality.
+- Suggest a Git commit message when finishing discrete work or needing input
+- WHEN I EXPLICITLY SAY "MARK TASK AS COMPLETE": update our meeting notes in [meeting_notes.md](mdc:.notes/meeting_notes.md) with the interaction, update the directory structure if applicable in [directory_structure.md](mdc:.notes/directory_structure.md), update the [task_list.md](mdc:.notes/task_list.md), and commit the changes. DO NOT DO THIS UNTIL I SAY "MARK TASK AS COMPLETE"!!!!!!!!!!!!!!!
 
 ### Records and Notes
-- Keep track of our interactions in `.notes/meeting_notes.md`. Reference them during every conversation to build context and understanding around the project.
-- The `.notes/project_overview.md` file contains a high level project overview. Reference it for key features, architecture, and goals.
-- `.notes/task_list.md` tracks current and completed tasks. Track tasks in this file according to high, medium, and low priority. When a task is completed, move it to the 'completed' section.
-- `.notes/directory_structure.md` contains a structure of current project components. Reference it to understand how the project should be structured and where components live. If a new component is added or components change dramatically, suggest a change to the directory structure to reflect that new structure.
+- Keep track of our interactions in [meeting_notes.md](mdc:.notes/meeting_notes.md). Reference them during every conversation to build context and understanding around the project.
+- The [project_overview.md](mdc:.notes/project_overview.md) file contains a high level project overview. Reference it for key features, architecture, and goals.
+- [task_list.md](mdc:.notes/task_list.md) tracks current and completed tasks. Track tasks in this file according to high, medium, and low priority. When a task is completed, move it to the 'completed' section.
+- [directory_structure.md](mdc:.notes/directory_structure.md) contains a structure of current project components. Reference it to understand how the project should be structured and where components live. If a new component is added or components change dramatically, suggest a change to the directory structure to reflect that new structure.
 
 

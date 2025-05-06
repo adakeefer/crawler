@@ -1,0 +1,9 @@
+---
+description: version control and git
+globs: 
+alwaysApply: false
+---
+This file informs your best practices when using version control and git.
+
+* use concise commit messages
+* 

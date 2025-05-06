@@ -1,0 +1,14 @@
+---
+description: running tests, testing, tests
+globs: 
+alwaysApply: false
+---
+This rule informs your testing behavior.
+
+- Run tests often, especially after completing work or adding tests
+- Make one change at a time for complex tasks, verify it works before proceeding
+- When running lots of tests, consider using Pytest's `-x` and `--lf` flags
+- Always activate the virtual environment before running tests or the application: `source .venv/bin/activate`
+- Once a small change has been tested in isolation, run the [run_tests.sh](mdc:crawler/scripts/run_tests.sh) script after every change to verify we don't regress.
+- rebuild and restart any services we have containerized after each change to verify we don't regress using [start_crawler.sh](mdc:crawler/scripts/start_crawler.sh)
+- Enhance health checks run in [start_crawler.sh](mdc:crawler/scripts/start_crawler.sh) and defined in docker level components as necessary for new functionality.

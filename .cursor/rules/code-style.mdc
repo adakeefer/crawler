@@ -5,13 +5,9 @@ alwaysApply: true
 ---
 This file informs your code style and testing behavior
 
-### Code Style and Testing
+### General Code Style
 
-- In Python, use lower-case types for type-hinting, e.g. `list`instead of `List`
-- Run tests often, especially after completing work or adding tests
-- When running lots of tests, consider using Pytest's `-x` and `--lf` flags
-- Make one change at a time for complex tasks, verify it works before proceeding
-- Suggest a Git commit message when finishing discrete work or needing input
+- prefer modular code with files of maximum 100-200 lines
 - Print lots of output to monitor the status and verify the success of certain tasks.
 - Don't use emojis.
 - Always activate the virtual environment before running tests or the application: `source .venv/bin/activate`
@@ -24,3 +20,6 @@ This file informs your code style and testing behavior
 - Include comments explaining complex operations
 - Use proper error handling and exit codes
 - Prefer bash scripts over Python scripts for simple automation tasks
+
+### Python Style
+- In Python, use lower-case types for type-hinting, e.g. `list`instead of `List`
