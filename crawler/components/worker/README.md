@@ -36,7 +36,17 @@ docker run \
 1. Connects to Redis, MongoDB, and MinIO
 2. Pulls URLs from its dedicated worker queue
 3. Downloads and validates web pages
-4. Checks content similarity against stored content
+4. Performs content deduplication:
+   ```
+   For each downloaded page:
+   1. Generate SHA-256 hash of content
+   2. Check MongoDB for exact match using content_hash
+   3. If no exact match:
+      - Generate 64-bit SimHash
+      - Find similar documents in MongoDB (Hamming distance < 3)
+      - If similar found, consider it a duplicate and discard
+      - If no similar found, store in MinIO and MongoDB
+   ```
 5. Extracts and validates new URLs
 6. Publishes new URLs to the Distributed URL queue
 
