@@ -13,12 +13,18 @@ This file describes the logical structure of the project. Please add to it when 
     * components
         * worker
             * worker.py
+            * Dockerfile
+            * requirements.txt
         * url_frontier
             * url_frontier.py
+            * Dockerfile
+            * requirements.txt
     * tests
         * test_components.py
         * test_infrastructure.py
     * scripts
+        * start_crawler.sh
+        * run_tests.sh
 * docker
     * docker-compose.yml
     * README.md
