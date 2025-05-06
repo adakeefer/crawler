@@ -20,7 +20,7 @@ This file informs your core development guidelines.
 - WHEN I EXPLICITLY SAY "MARK TASK AS COMPLETE": update our meeting notes in `.notes/meeting_notes.md` with the interaction, update the directory structure if applicable in `.notes/directory_structure.md`, update the `.notes/task_list.md`, and commit the changes. DO NOT DO THIS UNTIL I SAY "MARK TASK AS COMPLETE"!!!!!!!!!!!!!!!
 - always keep a bash script called `run_tests.sh` under a `scripts` folder at the root level of the project which runs all tests in the project.
 - always run the `scripts/run_tests.sh` script after every change to verify we don't regress
-- rebuild and restart any services we have containerized after each change to verify we don't regress. Enhance health checks as necessary for new functionality.
+- rebuild and restart any services we have containerized after each change to verify we don't regress using `scripts/start_crawler.sh`. Enhance health checks as necessary for new functionality.
 
 ### Records and Notes
 - Keep track of our interactions in `.notes/meeting_notes.md`. Reference them during every conversation to build context and understanding around the project.
