@@ -48,3 +48,38 @@
 - All infrastructure tests passing
 - Test runner script available at `crawler/scripts/run_tests.py`
 - Virtual environment properly configured with UV and pytest
+
+## 2024-03-26: Skeleton Components Implementation
+
+### Completed Tasks
+- Created skeleton worker process:
+  - Connects to Redis, MongoDB, and MinIO
+  - Logs connection status
+  - Includes error handling
+- Created skeleton URL frontier process:
+  - Connects to Redis only (removed MongoDB connection as it's not needed)
+  - Logs connection status
+  - Includes error handling
+- Added comprehensive tests for both components
+- Fixed test mocking issues with MinIO import
+
+### Technical Decisions
+- Separated URL frontier and worker into distinct files
+- URL frontier only connects to Redis (URL queue)
+- Worker connects to all services (Redis, MongoDB, MinIO)
+- Used proper Python logging
+- Implemented thorough error handling
+- Used environment variables for configuration
+
+### Notes
+- All component tests passing
+- Components ready for further feature implementation
+- Remember to follow these steps when completing tasks:
+  1. Commit changes
+  2. Record meeting notes
+  3. Mark item as complete in task list
+  4. Update directory structure if applicable
+
+### Next Steps
+- Begin implementing controller component
+- Add specific functionality to URL frontier and worker

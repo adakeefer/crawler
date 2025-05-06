@@ -9,9 +9,6 @@ Unless explicitly specified, write test cases for each task to verify the requir
 
 ### High Priority
 
-1. Create skeleton worker and URL frontier processes
-    * The components can just start up in docker containers or cloud compute instances and print a hello message, no need to perform any deeper functionality yet.
-    * Components should be able to connect to the appropriate external resources we just created, like content storage or queues. Print a success message when all connections have been made.
 2. Create controller to connect to and manage external resources and components
     * Add python script
     * Handle command line arguments.
@@ -43,3 +40,9 @@ Unless explicitly specified, write test cases for each task to verify the requir
     * Create Content storage
     * Create link storage
     * Create worker queues
+
+2. Create skeleton worker and URL frontier processes
+    * Created worker process that connects to Redis, MongoDB, and MinIO
+    * Created URL frontier process that connects to Redis
+    * Added comprehensive tests for both components
+    * All components print appropriate connection status messages

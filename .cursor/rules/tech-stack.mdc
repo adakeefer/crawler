@@ -9,5 +9,11 @@ This rule describes the types of technology you should prefer. If something is e
  * `uv` for package management
  * `pytest` for python unit tests
  * `docker-compose` for containerized applications
+ * `venv` for Python virtual environment management
+ * `fish` as the default shell
 
 # Denylist
+
+# Environment Setup
+- Always activate the virtual environment before running any Python commands: `source .venv/bin/activate.fish` (for fish shell)
+- Use `uv` to install packages in the virtual environment
