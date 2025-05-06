@@ -12,3 +12,4 @@ This file informs your code style and testing behavior
 - When running lots of tests, consider using Pytest's `-x` and `--lf` flags
 - Make one change at a time for complex tasks, verify it works before proceeding
 - Suggest a Git commit message when finishing discrete work or needing input
+- Print lots of output to monitor the status and verify the success of certain tasks.
