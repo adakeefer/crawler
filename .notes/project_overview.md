@@ -45,18 +45,52 @@ Build an extensible web crawler. The main goal is building a skeleton which craw
 ## In depth design
 Below shows a high level design:
 
-![webCrawlerDesign](architecture/webCrawlerDesign.png)
+![webCrawlerDesign](/architecture/webCrawlerDesign.png)
 
 ### Components needed:
 
-1. URL frontier: basically main (big) queue that has stuff partially on disk. This should be a DB
-    1. URL frontier is one node that talks to disk and queue, then sends off to other distributed queues
-2. Prioritizer
-    1. consumes from queue
-    2. computes priority for each message, pushes to queues q1…qn weighted by p
-3. Politeness router
-    1. pulls from queues randomly based on priority. consults mapping table for domains.
-    2. pushes messages to workers - workers only process messages from the same domain, so as to not DDOS any client.
+1. Initializer
+    * **Description**: Controller to start the flow.
+    * **Input**: command line arguments including a seed URL, number of workers.
+    * **Output**: Insert message to the URL Frontier.
+    * **Behavior**:
+        1. Initialize all external components - queues, worker instances, databases
+        2. Insert message to URL frontier and start crawl.
+    * **Restrictions**:
+        * N/A\
+2. URL frontier
+    * **Description**: Large distributed queue which holds incoming urls to visit. The queue might grow large, so we can store part of it on disk in the form of a DB.
+    * **Input**: URLs as strings, either initial seed set or new ones extracted from the crawl.
+    * **Output**: URLs
+    * **Dependencies**: global queue, a way to initially seed the queue, lightweight database for strings with short TTL.
+    * **Behavior**:
+        1. Continuously pull URLs from the DB and publish them to the queue until the queue is at a configurable maximum size.
+    * **Restrictions**:
+        * Queue should have a maximum size
+        * DB should be lightweight
+3. Prioritizer
+    * **Description**: consumes from url frontier, computes priority for each message, pushes to queues q1…qn weighted by priority.
+    * **Input**: URLs from URL frontier.
+    * **Output**: Populates second set of distributed queues which have a global priority. The mapping of priority to queue should be visible to the politeness router.
+    * **Dependencies**: URL frontier, weighted queues for message prioritization, mapping table of priority to queue.
+    * **Behavior**:
+        1. Pull URL from URL frontier
+        2. Compute priority for each URL. This should be extensible, we can start with computing the PageRank of a page. This should be accessible via things like an API call. A better pagerank means higher priority. Priorities should be normalized 0 (highest priority) to 100 (lowest priority).
+        3. Refer to the table mapping priority to queue to determine which queue to publish this URL to next. Each queue can be responsible for a range of priorities, say `100 % num_queues`
+        4. Publish the message to the appropriate queue.
+    * **Restrictions**:
+        * N/A 
+4. Politeness router
+    * **Description**: pulls from queues pseudo-randomly, weighted by priority. consults a table which maps URL domain to worker ID. Then pushes messages to workers
+    * **Input**: Reads URLs from prioritized politeness queues
+    * **Output**: publish URL to worker queues
+    * **Dependencies**: Table which maps workers to domains they are responsible for, politeness queue, table which maps workers to their dedicated queue, worker queues.
+    * **Restrictions**:
+        * workers only process messages from the same domain, so as to not DDOS any client.
+        * in general, higher priority queues are read from first.
+        * Worker domain table should have a TTL of 5 minutes.
+        * Each worker should have their own dedicated queue they read from.
+        * Mapping of worker should be done by worker ID.
 
 From here down, workers handle the rest!
 
