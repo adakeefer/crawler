@@ -83,3 +83,27 @@
 ### Next Steps
 - Begin implementing controller component
 - Add specific functionality to URL frontier and worker
+
+## 2024-03-26: Directory Structure Reorganization
+
+### Completed Tasks
+- Reorganized components into proper directory structure:
+  - Created `crawler/components/` directory
+  - Moved worker into `crawler/components/worker/`
+  - Moved URL frontier into `crawler/components/url_frontier/`
+- Updated test imports to reflect new file locations
+- Added directory structure documentation notes
+
+### Technical Decisions
+- Each component now has its own directory for better organization
+- Component-specific files (tests, utilities) can be added to component directories
+- Maintained backward compatibility with existing tests
+
+### Notes
+- All tests passing after reorganization
+- Directory structure now matches documentation
+- Added notes about directory creation requirements
+
+### Next Steps
+- Consider moving component-specific tests into component directories
+- Add component-specific configuration files

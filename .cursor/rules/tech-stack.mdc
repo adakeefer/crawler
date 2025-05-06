@@ -11,9 +11,15 @@ This rule describes the types of technology you should prefer. If something is e
  * `docker-compose` for containerized applications
  * `venv` for Python virtual environment management
  * `fish` as the default shell
+ * `bash` for shell scripts in the scripts directory
 
 # Denylist
 
 # Environment Setup
 - Always activate the virtual environment before running any Python commands: `source .venv/bin/activate.fish` (for fish shell)
 - Use `uv` to install packages in the virtual environment
+
+# Scripts
+- Prefer bash scripts in the `scripts` directory for automation tasks
+- Make scripts executable with `chmod +x`
+- Include proper error handling and exit codes
