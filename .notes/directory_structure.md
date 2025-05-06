@@ -12,3 +12,4 @@ This file describes the logical structure of the project. Please add to it when 
         * link storage
     * controller
     * configuration
+    * scripts
