@@ -8,5 +8,6 @@ This rule describes the types of technology you should prefer. If something is e
 # Preferred list
  * `uv` for package management
  * `pytest` for python unit tests
+ * `docker-compose` for containerized applications
 
 # Denylist
