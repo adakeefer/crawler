@@ -3,6 +3,8 @@ import redis
 import pymongo
 from minio import Minio
 import logging
+import sys
+import time
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -12,6 +14,7 @@ class Worker:
         self.redis_client = None
         self.mongo_client = None
         self.minio_client = None
+        self.running = False
         
     def connect_to_redis(self):
         try:
@@ -54,6 +57,33 @@ class Worker:
             logger.error(f"Failed to connect to MinIO: {e}")
             return False
 
+    def health_check(self):
+        """Run health check and exit with appropriate status code."""
+        try:
+            if not self.redis_client:
+                self.connect_to_redis()
+            if not self.mongo_client:
+                self.connect_to_mongodb()
+            if not self.minio_client:
+                self.connect_to_minio()
+                
+            # Check all connections
+            self.redis_client.ping()
+            self.mongo_client.admin.command('ping')
+            self.minio_client.list_buckets()
+            
+            sys.exit(0)  # Healthy
+        except Exception as e:
+            logger.error(f"Health check failed: {e}")
+            sys.exit(1)  # Unhealthy
+
+    def run(self):
+        """Main run loop."""
+        self.running = True
+        while self.running:
+            # TODO: Implement worker logic
+            time.sleep(1)  # Prevent CPU spinning
+
     def start(self):
         logger.info("Starting worker process...")
         
@@ -64,6 +94,7 @@ class Worker:
         
         if all([redis_connected, mongo_connected, minio_connected]):
             logger.info("Worker successfully connected to all services")
+            self.run()
         else:
             logger.error("Worker failed to connect to one or more services")
             return False
@@ -72,4 +103,7 @@ class Worker:
 
 if __name__ == "__main__":
     worker = Worker()
-    worker.start() 
+    if "--health-check" in sys.argv:
+        worker.health_check()
+    else:
+        worker.start() 
