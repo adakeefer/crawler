@@ -22,7 +22,6 @@ Build an extensible web crawler. The main goal is building a skeleton which craw
 - Web crawl is robust and able to handle bad HTML, unresponsive servers, malicious links, etc.
 - Web crawler must be polite (may not make too many requests to a website within a short time interval)
 
-
 ## Constraints
 
  - Constrain the search to 10000 web pages for now.
@@ -58,7 +57,7 @@ We want a lightweight python script to initialize the flow.
 
 ### Resources needed:
 
-This section describes the external data structures needed for this application commonly used in software development like queues or databases. This section describes the large distributed components needed - unless explicitly mentioned, use cloud provider or docker implementations of these resources, no need to reinvent them. These resources should be fault tolerant and handle concurrent access. They don't need to have a ton of capacity or resources - start with the smallest option available and we can scale them if needed. Each resource will be accessed by multiple components described in later sections.`
+This section describes the external data structures needed for this application commonly used in software development like queues or databases. This section describes the large distributed components needed - unless explicitly mentioned, use cloud provider or docker implementations of these resources, no need to reinvent them. These resources should be fault tolerant and handle concurrent access. They don't need to have a ton of capacity or resources - start with the smallest option available and we can scale them if needed. Each resource will be accessed by multiple components described in later sections.
 
 1. Distributed URL queue
     * **Description**: Distributed queue which holds URLs for processing.
@@ -73,6 +72,18 @@ This section describes the external data structures needed for this application 
     * **Constraints**:
         * We want to be able to efficiently look up if HTML stored in the database is within a degree of similarity to a query HTML.
         * Input HTML will be <= 500kb uncompressed. Ideally less than that with an efficient storage mechanism.
+3. Link storage
+    * **Description** Database which stores URLs (strings). Frequent read/write, entries are immutable.
+    * **Data structure type** set
+    * **Input** URLs as strings
+    * **Constraints**:
+        * Number of input strings can grow large. We want a 1 hr TTL so we don't visit any pages we've already seen.
+4. Worker queues
+    * **Description**: Distributed queue which holds URLs for processing. Smaller than the Distributed URL queue, specific to one worker (compute instance)
+    * **Data structure type**: Queue
+    * **Input**: URLs as strings
+    * **Constraints**:
+        * configurable maximum queue size. Start with max 10000 messages.
 
 
 ### Components needed:
@@ -82,30 +93,29 @@ This section describes the components necessary for this application. It contain
 Each component should live in it's own docker or cloud compute instance to distribute compute unless explicitly mentioned. Subcomponents share the same compute instance as the parent component.
 
 1. URL frontier
-    * **Description**: Component which reads from Large distributed queue which holds incoming urls to visit, prioritizes and distributes the URLs to workers.
-    * **Input**: URLs as strings, either initial seed set or new ones extracted from the crawl.
+    * **Description**: Component which reads from Distributed URL queue which holds incoming urls to visit, prioritizes and distributes the URLs to workers.
+    * **Input**: URLs as strings.
     * **Output**: URLs to worker queues
-    * **Dependencies**: Large distributed queue, worker instances, set of worker queues, mapping of queue to worker, mapping of domain to worker.
+    * **Dependencies**: Distributed URL queue, worker instances, worker queues, mapping of queue to worker, mapping of domain to worker.
     * **Behavior**:
-        1. Continuously pull URLs from distributed queue.
+        1. Continuously pull URLs from Distributed URL queue.
         2. Prioritize the URL and place in a set of queues ranked by priority.
         3. Consume from this set of queues pseudorandomly, weighted by priority, check if any workers are already handling the domain of the current URL. If they are, publish the URl to that worker's queue. If not, push the URL to the worker under the least amount of load (for now let's assume load is equivalent to number of messages in that worker's queue).
     * **Restrictions**:
-        * Queues should have maximum size and be able to handle backpressure.
-        * Do not overwhelm worker queues.
+        * Handle backpressure from worker queues.
     * **Subcomponents**:
         1. Prioritizer
-            * **Description**: consumes from url frontier, computes priority for each message, pushes to queues q1…qn weighted by priority.
+            * **Description**: consumes from Distributed URL queue, computes priority for each message, pushes to queues q1…qn weighted by priority.
             * **Input**: URLs from URL frontier.
-            * **Output**: Populates second set of distributed queues which have a global priority. The mapping of priority to queue should be visible to the politeness router.
-            * **Dependencies**: URL frontier, weighted queues for message prioritization, mapping table of priority to queue.
+            * **Output**: Populates a set of internal queues which have a global priority. The mapping of priority to queue should be visible to the politeness router.
+            * **Dependencies**: Distributed URL queue, PageRank API, weighted queues for message prioritization, mapping table of priority to queue.
             * **Behavior**:
-                1. Pull URL from URL frontier
+                1. Pull URL from Distributed URL queue
                 2. Compute priority for each URL. This should be extensible, we can start with computing the PageRank of a page. This should be accessible via things like an API call. A better pagerank means higher priority. Priorities should be normalized 0 (highest priority) to 100 (lowest priority).
                 3. Refer to the table mapping priority to queue to determine which queue to publish this URL to next. Each queue can be responsible for a range of priorities, say `100 % num_queues`
                 4. Publish the message to the appropriate queue.
             * **Restrictions**:
-                * N/A 
+                * Be able to handle retries and transient outages from PageRank API
         2. Politeness router
             * **Description**: pulls from queues pseudo-randomly, weighted by priority. consults a table which maps URL domain to worker ID. Then pushes messages to workers
             * **Input**: Reads URLs from prioritized politeness queues
@@ -121,18 +131,18 @@ Each component should live in it's own docker or cloud compute instance to distr
                 * Each worker should have their own dedicated queue they read from.
                 * Mapping of worker should be done by worker ID.
 2. workers
-    * **Description**: Compute instances which download the webpages, parse the content, extract usable links, and potentially perform some action on those links before pushing the new links to the URL frontier.
+    * **Description**: Compute instances which download the webpages, parse the content, extract usable links, and potentially perform some action on those links before pushing the new links to the Distributed URL queue.
     * **Input**: URLS from dedicated worker queue
-    * **Output**: URLs to URL frontier
-    * **Dependencies**: worker queue, URL frontier, content storage, url storage, optional extensible action.
+    * **Output**: URLs to Distributed URL queue
+    * **Dependencies**: worker queue, Distributed URL queue, content storage, link storage, optional extensible action.
     * **Behavior**:
-        1. Pull URL from queue
+        1. Pull URL from worker queue
         2. Download webpage.
         3. Validate content, discarding content we've already seen.
         4. Optionally perform some action based on the extensible module plugged in.
         5. extract URLs from the content.
         6. Parse the URLs, discarding already seen or harmful ones.
-        7. Publish validated URLs to URL frontier.
+        7. Publish validated URLs to Distributed URL queue.
     * **Restrictions**:
         * N/A
     * **Subcomponents**:
@@ -168,41 +178,13 @@ Each component should live in it's own docker or cloud compute instance to distr
             * **Restrictions**:
                 * N/A
         4. Link extractor
-            * **Description**: Pulls links from the HTML, validates them and passes along to the URL frontier, updating link storage.
+            * **Description**: Pulls links from the HTML, validates them and passes along to the Distributed URL queue, updating link storage.
             * **Input**: raw HTML as text.
-            * **Output**: publish message to URL frontier.
+            * **Output**: publish message to Distributed URL queue.
             * **Dependencies**: Content parser, Link storage, URL frontier
             * **Behavior**:
                 1. Extract links from the raw HTML.
                 2. Validate the links are well formed.
-                3. Check the Link storage to see if we have already visited this URL or if we have visited it. If we have, drop it, otherwise store this link in the Link storage and publish the URL to the URL frontier.
+                3. Check the Link storage to see if we have already visited this URL or if we have visited it. If we have, drop it, otherwise store this link in the Link storage and publish the URL to the Distributed URL queue.
             * **Restrictions**:
-                * Be able to handle malformed links and transient outages in link storage or URL frontier.
-From here down, workers handle the rest!
-
-1. HTML downloader
-	1. Pulls the actual web page. Maybe renders embedded JS.
-    2. Optional: DNS cache
-2. content parser
-    1. Validate content
-    2. Check if we've seen this content before via Blob Storage
-    3. Module plugin
-    	1. This is where the actual "job" of the web crawler is done. Sometimes you archive pages, sometimes you rank them... the point is the crawler is extensible.
-3. Link extractor
-	1. Detect and pull links from the HTML
-4. link filter
-    1. Validate this is a well-formed link
-    2. Check if we've seen this link before via URL storage.
-    3. If both checks pass, publish the URL to the frontier!
-
-### URL Frontier design
-Below shows the design of the url frontier - how we begin, prioritize, and distribute our workload to workers.
-
-![urlFrontierDesign_expanded](architecture/urlFrontierDesign_expanded.png)
-
-* Prioritizers consume from URL queue and decide which pages are worth visiting based on PageRank
-* Pages with higher PageRank are published to higher priority queues, with a degree of randomness to avoid hotspots.
-* Politeness router pulls from queues based on weights - higher priority queues are more likely to be chosen
-* upon choosing a queue and receiving a message, the URL is stripped for the domain and if any worker is already handling pages for that domain the url always goes to that worker to reduce the volume of requests per minute to any specific host. 
-    * Maintain a lightweight cache between workers to check this mapping
-* Each worker has its own dedicated queue
+                * Be able to handle malformed links and transient outages in link storage or Distributed URL queue.
