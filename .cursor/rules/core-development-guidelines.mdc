@@ -15,6 +15,7 @@ This file informs your core development guidelines.
 - Don't commit to Git without asking
 - Never run major destructive operations (e.g. dropping tables) without asking first
 - If you perform an action often, please place it in a script to easily rerun it in a `crawler/scripts` directory
+- Use concise git commit messages
 
 ### Records and Notes
 - Keep track of our interactions in `.notes/meeting_notes.md`. Reference them during every conversation to build context and understanding around the project.
