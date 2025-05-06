@@ -47,18 +47,22 @@ Below shows a high level design:
 
 ![webCrawlerDesign](/architecture/webCrawlerDesign.png)
 
+### Starting the flow:
+We want a lightweight python script to initialize the flow.
+* **Input**: command line arguments including a seed URL, number of workers.
+* **Output**: Insert message to the URL Frontier.
+* **Behavior**:
+    1. Initialize all external components - queues, worker instances, databases. Create `num_workers` workers from the command line arguments and assign each worker a unique integer ID in range 0-`num_workers - 1`.
+    2. Insert message to URL frontier and start crawl.
+    3. Perform logging and monitoring, if necessary.
+
 ### Components needed:
 
-1. Initializer
-    * **Description**: Controller to start the flow.
-    * **Input**: command line arguments including a seed URL, number of workers.
-    * **Output**: Insert message to the URL Frontier.
-    * **Behavior**:
-        1. Initialize all external components - queues, worker instances, databases
-        2. Insert message to URL frontier and start crawl.
-    * **Restrictions**:
-        * N/A\
-2. URL frontier
+This section describes the components necessary for this application. It contains a description of the component, component inputs, component outputs, dependencies for each component, restrictions, and a list of subcomponents - logical units of functionality each component can be broken down into.
+
+Each component should live in it's own docker or cloud compute instance to distribute compute unless explicitly mentioned. Subcomponents share the same compute instance as the parent component.
+
+1. URL frontier
     * **Description**: Large distributed queue which holds incoming urls to visit. The queue might grow large, so we can store part of it on disk in the form of a DB.
     * **Input**: URLs as strings, either initial seed set or new ones extracted from the crawl.
     * **Output**: URLs
@@ -68,7 +72,8 @@ Below shows a high level design:
     * **Restrictions**:
         * Queue should have a maximum size
         * DB should be lightweight
-3. Prioritizer
+    * **Subcomponents**:
+2. Prioritizer
     * **Description**: consumes from url frontier, computes priority for each message, pushes to queues q1…qn weighted by priority.
     * **Input**: URLs from URL frontier.
     * **Output**: Populates second set of distributed queues which have a global priority. The mapping of priority to queue should be visible to the politeness router.
@@ -80,11 +85,14 @@ Below shows a high level design:
         4. Publish the message to the appropriate queue.
     * **Restrictions**:
         * N/A 
-4. Politeness router
+3. Politeness router
     * **Description**: pulls from queues pseudo-randomly, weighted by priority. consults a table which maps URL domain to worker ID. Then pushes messages to workers
     * **Input**: Reads URLs from prioritized politeness queues
     * **Output**: publish URL to worker queues
     * **Dependencies**: Table which maps workers to domains they are responsible for, politeness queue, table which maps workers to their dedicated queue, worker queues.
+    * **Behavior**:
+        1. Compute a queue to look up. This should be done by choosing a random number between 0-100, with the caveat that lower numbers are more likely to be chosen. Look up the table mapping priority to queue to determine which queue to read from - since each queue is responsible for a range of priorities, take the floor of the chosen priority to pick the next queue.
+        2. Read from the chosen queue and reference the table of domain to worker ID. If the domain does not exist in the table, choose a random worker (random ID in range 0-`num_workers`). If it does exist in the table, publish that message to the worker ID the domain maps to. Reference a lookup table of worker id to queue to do so.
     * **Restrictions**:
         * workers only process messages from the same domain, so as to not DDOS any client.
         * in general, higher priority queues are read from first.
