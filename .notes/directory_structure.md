@@ -19,6 +19,21 @@ This file describes the logical structure of the project. Please add to it when 
             * url_frontier.py
             * Dockerfile
             * requirements.txt
+    * resources
+        * schemas
+            * mongodb_schema.py
+            * redis_schema.py
+            * minio_schema.py
+            * README.md
+        * scripts
+            * init_redis.py
+            * verify_redis.py
+            * init_mongodb.py
+            * verify_mongodb.py
+            * init_minio.py
+            * verify_minio.py
+            * init_resources.sh
+        * README.md
     * tests
         * test_components.py
         * test_infrastructure.py
